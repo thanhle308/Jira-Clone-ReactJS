@@ -2,6 +2,10 @@ import React from 'react';
 import './Login.css';
 import { withFormik } from 'formik';
 import * as Yup from 'yup';
+import { connect } from 'react-redux';
+import { USER_SIGNIN_API } from '../../redux/types/Jirabugs/JirabugsType';
+import { signinJirabugsAction } from '../../redux/actions/JiraBugsAction';
+
 
 const Login = (props) => {
     const {
@@ -14,19 +18,20 @@ const Login = (props) => {
     } = props;
     return (
         <div>
+
             <div className="login-box">
                 <h2>Login</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="user-box">
-                        <input onChange={handleChange} type="text" name="username" required="" />
-                        <label>Username</label>
-                        <p>{errors.username ? ( <p className='text-red-500'>{errors.username}</p> ) : null}</p>
+                        <input onChange={handleChange} type="text" name="email" required="" />
+                        <label>Email</label>
+                        <div>{errors.email ? ( <div className='text-red-500'>{errors.email}</div> ) : null} </div>
                     </div>
                    
                     <div className="user-box">
                         <input onChange={handleChange} type="password" name="password" required="" />
                         <label>Password</label>
-                        <p>{errors.password ? ( <p className='text-red-500'>{errors.password}</p> ) : null}</p>
+                        <div>{errors.password ? ( <div className='text-red-500'>{errors.password}</div> ) : null} </div>
                     </div>
                     <button>
                         <a>
@@ -47,18 +52,21 @@ const Login = (props) => {
 
 const LoginWithFormik = withFormik({
     mapPropsToValues: () => ({
-        username: '',
+        email: '',
         password: '',
     }),
     validationSchema: Yup.object({
-        username: Yup.string().required("Tài khoản không được để trống").min(6, "tối thiểu 6 ký tự ").max(15, "Tối đà 15 ký tự"),
-        password: Yup.string().required("Mật khẩu không được để trống").matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{4,10}$/, "Mật khẩu từ 6-10 ký tự, phải có ký tự thường, in hoa, đặc biệt, số"),
+        email: Yup.string().required("Tài khoản không được để trống"),
+        password: Yup.string().required("Mật khẩu không được để trống"),
     }),
-    handleSubmit: (values, { setSubmitting }) => {
-        console.log(values)
+    handleSubmit: ({email,password}, { props, setSubmitting }) => {
+        props.dispatch(signinJirabugsAction(email,password));
+
+        // console.log(props)
+        // console.log(values)
     },
 
     displayName: 'LoginWithFormik',
 })(Login);
 
-export default LoginWithFormik;
+export default connect ()(LoginWithFormik);

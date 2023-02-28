@@ -1,9 +1,12 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 
 const Home = (props) => {
+    const {userLogin} = useSelector(state => state.UserLoginJiraReducer)
     return (
         <div>
-            day la home page
+           
+           <img src={userLogin.avatar} alt="" />
         </div>
     );
 }
