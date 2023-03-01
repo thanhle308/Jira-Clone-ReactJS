@@ -1,4 +1,6 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
+
 
 const MenuJira = () => {
     return (
@@ -15,11 +17,11 @@ const MenuJira = () => {
             <div className="control">
                 <div>
                     <i className="fa fa-credit-card" />
-                    <span>Cyber Board</span>
+                    <NavLink to='/jira' activeClassName='active font-weight-bold'>Jira Board</NavLink>
                 </div>
                 <div>
                     <i className="fa fa-cog" />
-                    <span>Project Settings</span>
+                    <NavLink to='/createproject'>Create Project</NavLink>
                 </div>
             </div>
             <div className="feature">

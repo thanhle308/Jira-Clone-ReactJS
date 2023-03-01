@@ -1,5 +1,4 @@
 import { Route } from "react-router-dom";
-import { Fragment } from "react";
 
 
 export const HomeTemplate = (props) => { //props: path,exact , Component
