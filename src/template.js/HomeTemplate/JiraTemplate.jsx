@@ -15,12 +15,6 @@ export const JiraTemplate = (props) => { //props: path,exact , Component
                 <Sidebar />
                 <MenuJira />
                 <props.component {...propsRoute} />
-                {/* <div className="main">
-                    <HeaderMain />
-                    <h3>Cyber Board</h3>
-                    <InfoMain />
-                    <ContentMain />
-                </div> */}
                 <ModalJira />
             </div>
         </>

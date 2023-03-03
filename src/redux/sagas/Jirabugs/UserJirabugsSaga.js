@@ -2,9 +2,12 @@ import axios from "axios";
 import { call, delay, fork, take, takeEvery, takeLatest, put } from 'redux-saga/effects';
 import { jiraService } from "../../../services/JiraService";
 import { ACCESS_TOKEN, USER_LOGIN } from "../../../util/setting";
-import { USER_SIGNIN_API, USLOGIN } from "../../types/Jirabugs/JirabugsType";
+import { USER_SIGNIN_API, USLOGIN, GET_USER_API, GET_USER_SEARCH, ADD_USER_PROJECT, GET_LIST_PROJECT_SAGA } from "../../types/Jirabugs/JirabugsType";
 import { DISPLAY_LOADING, HIDE_LOADING } from "../../types/LoadingType";
 import { history } from "../../../App";
+import { userService } from "../../../services/UserService";
+
+
 //Quản lý các action saga
 function* signinSaga(action) {
     console.log(action);
@@ -22,7 +25,7 @@ function* signinSaga(action) {
         localStorage.setItem(USER_LOGIN, JSON.stringify(data.content))
 
         yield put({
-            type :USLOGIN,
+            type: USLOGIN,
             userLogin: data.content
         })
 
@@ -41,4 +44,42 @@ function* signinSaga(action) {
 
 export function* theoDoiSignin() {
     yield takeLatest(USER_SIGNIN_API, signinSaga);
+}
+// Get user 
+
+function* getUserSaga(action) {
+    //Gọi API
+    try {
+        const { data, status } = yield call(() => userService.getUser(action.keyword));
+        yield put({
+            type: GET_USER_SEARCH,
+            listUsers: data.content,
+        })
+    } catch (error) {
+        console.log(error.response.data)
+    }
+}
+
+export function* theoDoigetUser() {
+    yield takeLatest(GET_USER_API, getUserSaga);
+}
+
+//ASSIGN USER 
+
+function* addUserProjectSaga(action) {
+    //Gọi API
+    try {
+        const { data, status } = yield call(() => userService.assignUserProject(action.userProject));
+
+        yield put({
+            type: GET_LIST_PROJECT_SAGA
+        })
+
+    } catch (error) {
+        console.log("hihi",error)
+    }
+}
+
+export function* theoDoiaddUserProjectSaga() {
+    yield takeLatest(ADD_USER_PROJECT, addUserProjectSaga);
 }

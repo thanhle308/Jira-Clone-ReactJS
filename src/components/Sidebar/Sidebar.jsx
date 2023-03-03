@@ -1,28 +1,49 @@
-import React from 'react';
+import { FileOutlined, PieChartOutlined, UserOutlined, DesktopOutlined, TeamOutlined } from '@ant-design/icons';
+import { Breadcrumb, Layout, Menu, theme } from 'antd';
+import { useState } from 'react';
+const { Header, Content, Footer, Sider } = Layout;
+function getItem(label, key, icon, children) {
+    return {
+        key,
+        icon,
+        children,
+        label,
+    };
+}
+const items = [
+    getItem('Option 1', '1', <PieChartOutlined />),
+    getItem('Option 2', '2', <DesktopOutlined />),
+    getItem('User', 'sub1', <UserOutlined />, [
+        getItem('Tom', '3'),
+        getItem('Bill', '4'),
+        getItem('Alex', '5'),
+    ]),
+    getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
+    getItem('Files', '9', <FileOutlined />),
+];
 
 const Sidebar = () => {
+    const [collapsed, setCollapsed] = useState(false);
+    const {
+        token: { colorBgContainer },
+    } = theme.useToken();
     return (
-        <div className="sideBar">
-            <div className="sideBar-top">
-                <div className="sideBar-icon">
-                    <i className="fab fa-jira" />
-                </div>
-                <div className="sideBar-icon" data-toggle="modal" data-target="#searchModal" style={{ cursor: 'pointer' }}>
-                    <i className="fa fa-search" />
-                    <span className="title">SEARCH ISSUES</span>
-                </div>
-                <div className="sideBar-icon">
-                    <i className="fa fa-plus" />
-                    <span className="title">CREATE ISSUES</span>
-                </div>
-            </div>
-            <div className="sideBar-bottom">
-                <div className="sideBar-icon">
-                    <i className="fa fa-question-circle" />
-                    <span className="title">ABOUT</span>
-                </div>
-            </div>
-        </div>
+        <Layout
+            style={{
+                minHeight: '100vh',
+            }}
+        >
+            <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+                <div
+                    style={{
+                        height: 32,
+                        margin: 16,
+                        background: 'rgba(255, 255, 255, 0.2)',
+                    }}
+                />
+                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+            </Sider>
+        </Layout>
     );
 }
 
