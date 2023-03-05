@@ -1,6 +1,13 @@
 import React from 'react';
 
-const InfoMain = () => {
+const InfoMain = (props) => {
+    const renderAvatar = () => {
+        return props.projectDetail.members?.map((user,index) => {
+            return <div key={index} className='avatar'>
+                <img src={user.avatar} alt={user.avatar} />
+            </div>
+        })
+    }
     return (
         <div className="info" style={{ display: 'flex' }}>
             <div className="search-block">
@@ -8,7 +15,8 @@ const InfoMain = () => {
                 <i className="fa fa-search" />
             </div>
             <div className="avatar-group" style={{ display: 'flex' }}>
-                <div className="avatar">
+                {renderAvatar()}
+                {/* <div className="avatar">
                     <img src={require('../../assets/img/download (1).jfif')} alt='' />
                 </div>
                 <div className="avatar">
@@ -16,7 +24,7 @@ const InfoMain = () => {
                 </div>
                 <div className="avatar">
                     <img src={require('../../assets/img/download (3).jfif')} alt='' />
-                </div>
+                </div> */}
             </div>
             <div style={{ marginLeft: 20 }} className="text">Only My Issues</div>
             <div style={{ marginLeft: 20 }} className="text">Recently Updated</div>

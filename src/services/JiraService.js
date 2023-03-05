@@ -32,7 +32,7 @@ export const jiraService = {
             data: newProject,
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
-                // 'TokenCybersoft': TOKEN_CYBER
+                'TokenCybersoft': TOKEN_CYBER
             }
         })
     },

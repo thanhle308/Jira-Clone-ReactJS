@@ -1,8 +1,12 @@
 import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
-
+import FormCreateTask from '../Forms/FormCreateTask/FormCreateTask';
 
 const MenuJira = () => {
+    const dispatch = useDispatch();
+
+
     return (
         <div className="menu">
             <div className="account">
@@ -30,9 +34,15 @@ const MenuJira = () => {
                 </div>
             </div>
             <div className="feature">
-                <div>
+                <div onClick={() => {
+                    dispatch({
+                        type: 'OPEN_FORM_CREATE_TASK',
+                        Component : <FormCreateTask/>,
+                        title : 'Create Task',
+                    })
+                }}>
                     <i className="fa fa-truck mr-2" />
-                    <span>Releases</span>
+                    <span>Create Task</span>
                 </div>
                 <div>
                     <i className="fa fa-equals mr-2" />

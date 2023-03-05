@@ -9,6 +9,8 @@ import { ProjectCategoryReducer } from "./reducers/ProjectCategoryReducer";
 import { ProjectJiraReducer } from "./reducers/ProjectJiraReducer";
 import { drawerReducer } from "./reducers/DrawerJiraReducer";
 import { ProjectEditReducer } from "./reducers/ProjectEditReducer";
+import { TaskTypeReducer } from "./reducers/TaskTypeReducer";
+import { PriorityReducer } from "./reducers/PriorityReducer";
 
 
 
@@ -21,6 +23,8 @@ const rootReducer = combineReducers({
     ProjectJiraReducer,
     drawerReducer,
     ProjectEditReducer,
+    TaskTypeReducer,
+    PriorityReducer,
 });
 
 export const store = createStore(rootReducer, applyMiddleware(thunk, middleWareSaga));

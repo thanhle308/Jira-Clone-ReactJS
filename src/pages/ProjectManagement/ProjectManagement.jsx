@@ -1,16 +1,14 @@
 import React from 'react';
-import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, SearchOutlined, CloseCircleOutlined } from '@ant-design/icons';
 import { Button, Input, Space, Table, Tag, Avatar, Popover, AutoComplete } from 'antd';
 import { useRef, useState, useEffect } from 'react';
 import Highlighter from 'react-highlight-words';
 import parse from 'html-react-parser';
 import { useSelector, useDispatch } from 'react-redux';
-import { ADD_USER_PROJECT, DELETE_PROJECT_SAGA, GET_LIST_PROJECT_SAGA, GET_USER_API } from '../../redux/types/Jirabugs/JirabugsType';
+import { ADD_USER_PROJECT, DELETE_PROJECT_SAGA, GET_LIST_PROJECT_SAGA, GET_USER_API, REMOVE_USER_PROJECT } from '../../redux/types/Jirabugs/JirabugsType';
 import FormEditProject from '../../components/Forms/FormEditProject/FormEditProject';
 import { message, Popconfirm } from 'antd';
-
-
-const url = 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg';
+import { NavLink } from 'react-router-dom';
 
 const confirm = (e) => {
     message.success('Click on Yes');
@@ -21,9 +19,12 @@ const cancel = (e) => {
 };
 
 const ProjectManagement = () => {
+
     const { projectList } = useSelector(state => state.ProjectJiraReducer)
     const { userSearch } = useSelector(state => state.UserLoginJiraReducer)
-    console.log({ userSearch })
+
+    const searchRef = useRef(null);
+    // console.log({ userSearch })
     const dispatch = useDispatch();
 
     const [value, setValue] = useState("");
@@ -86,6 +87,9 @@ const ProjectManagement = () => {
             dataIndex: 'projectName',
             key: 'projectName',
             width: '20%',
+            render: (text,record,index) => {
+                return <NavLink to={`/projectdetail/${record.id}`}>{text}</NavLink>
+            },
             sorter: (item2, item1) => {
                 let projectName1 = item1.projectName?.trim().toLowerCase();
                 let projectName2 = item2.projectName?.trim().toLowerCase();
@@ -132,7 +136,41 @@ const ProjectManagement = () => {
             render: (text, record, index) => {
                 return <div>
                     {record.members?.slice(0, 3).map((member, index) => {
-                        return <Avatar key={index} src={member.avater} />
+                        return <Popover key={index} placement='top' title={'Members'} content={() => {
+                            return <table className='table'>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Avatar</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {record.members?.map((item, index) => {
+                                        return <tr key={index}>
+                                            <td>{item.userId}</td>
+                                            <td>
+                                                <img src={item.avatar} width='30' height='30' style={{ borderRadius: '50%' }} />
+                                            </td>
+                                            <td>{item.name}</td>
+                                            <td>
+                                                <button onClick={() => {
+                                                    dispatch({
+                                                        type: REMOVE_USER_PROJECT,
+                                                        userProject: {
+                                                            userId: item.userId,
+                                                            projectId: record.id,
+                                                        }
+                                                    })
+                                                }} className='btn btn-danger' style={{ borderRadius: '50%' }}>X</button>
+                                            </td>
+                                        </tr>
+                                    })}
+                                </tbody>
+                            </table>
+                        }}>
+                            <Avatar className='mr-1' key={index} src={member.avatar} />
+                        </Popover>
                     })}
                     {record.members?.length > 3 ? <Avatar>...</Avatar> : ''}
 
@@ -150,12 +188,8 @@ const ProjectManagement = () => {
 
                             onSelect={(valueSelect, option) => {
                                 // set gia  tri hop thoai 
-                                setValue(option.label);
-                                console.log("hahah",option.label)
+                                setValue(option.label);                               
                                 //goi api
-                                console.log('projectId', record.id)
-                                console.log('userId', Number(valueSelect))
-
                                 dispatch({
                                     type: ADD_USER_PROJECT,
                                     userProject: {
@@ -167,10 +201,15 @@ const ProjectManagement = () => {
 
                             style={{ width: '100%' }}
                             onSearch={(value) => {
-                                dispatch({
-                                    type: GET_USER_API,
-                                    keyword: value
-                                })
+                                if(searchRef.current) {
+                                    clearTimeout(searchRef.current);
+                                }
+                                searchRef.current = setTimeout(() => {
+                                    dispatch({
+                                        type: GET_USER_API,
+                                        keyword: value
+                                    })
+                                },300)
                             }} />
                     }} trigger="click">
                         <Button style={{ borderRadius: '50%' }}>+</Button>
@@ -186,6 +225,7 @@ const ProjectManagement = () => {
                     <button className='btn btn-primary mr-2' onClick={() => {
                         const action = {
                             type: 'OPEN_FORM_EDIT_PROJECT',
+                            title:'Edit Project',
                             Component: <FormEditProject />,
                             // SubmitFunction:
                         }
@@ -204,6 +244,7 @@ const ProjectManagement = () => {
                     <Popconfirm
                         title="Delete Project ?"
                         onConfirm={() => {
+                            console.log('id project la:', record.id);
                             dispatch({
                                 type: DELETE_PROJECT_SAGA,
                                 idProject: record.id,

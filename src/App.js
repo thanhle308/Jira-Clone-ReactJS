@@ -19,8 +19,9 @@ function App() {
       <Modal/>
       <Switch>
         <UserLoginTemplate exact path="/login" component={Login} />
-        <JiraTemplate exact path='/jira' component={IndexJira} />
+        {/* <JiraTemplate exact path='/jira' component={IndexJira} /> */}
         <JiraTemplate exact path='/createproject' component={CreateProject} />
+        <JiraTemplate exact path='/projectdetail/:projectId' component={IndexJira} />
         <JiraTemplate exact path='/' component={ProjectManagement} />
       </Switch>
 

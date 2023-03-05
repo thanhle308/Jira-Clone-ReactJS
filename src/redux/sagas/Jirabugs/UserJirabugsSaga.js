@@ -2,10 +2,12 @@ import axios from "axios";
 import { call, delay, fork, take, takeEvery, takeLatest, put } from 'redux-saga/effects';
 import { jiraService } from "../../../services/JiraService";
 import { ACCESS_TOKEN, USER_LOGIN } from "../../../util/setting";
-import { USER_SIGNIN_API, USLOGIN, GET_USER_API, GET_USER_SEARCH, ADD_USER_PROJECT, GET_LIST_PROJECT_SAGA } from "../../types/Jirabugs/JirabugsType";
+import { REMOVE_USER_PROJECT,USER_SIGNIN_API, USLOGIN, GET_USER_API, GET_USER_SEARCH, ADD_USER_PROJECT, GET_LIST_PROJECT_SAGA } from "../../types/Jirabugs/JirabugsType";
 import { DISPLAY_LOADING, HIDE_LOADING } from "../../types/LoadingType";
 import { history } from "../../../App";
 import { userService } from "../../../services/UserService";
+import { projectService } from "../../../services/ProjectService";
+import { notifiFunction } from "../../../util/Notification/notification";
 
 
 //Quản lý các action saga
@@ -30,7 +32,7 @@ function* signinSaga(action) {
         })
 
         console.log(data)
-        history.push('/home');
+        history.push('/');
 
     } catch (error) {
         console.log(error.response.data)
@@ -64,7 +66,7 @@ export function* theoDoigetUser() {
     yield takeLatest(GET_USER_API, getUserSaga);
 }
 
-//ASSIGN USER 
+//add USER 
 
 function* addUserProjectSaga(action) {
     //Gọi API
@@ -82,4 +84,28 @@ function* addUserProjectSaga(action) {
 
 export function* theoDoiaddUserProjectSaga() {
     yield takeLatest(ADD_USER_PROJECT, addUserProjectSaga);
+}
+// remove User
+function* removeUserProjectSaga(action) {
+    //Gọi API
+    try {
+        const { data, status } = yield call(() => projectService.deleteUserFromProject(action.userProject));
+
+        if (status === 200){
+            yield put({
+                 type: GET_LIST_PROJECT_SAGA,
+            })
+            notifiFunction('success','Remove User is successful !');
+         }
+
+    } catch (error) {
+        console.log("hihi",error)
+        if (error.response.data.statusCode === 403){
+            notifiFunction('error','Bạn không có quyền remove User !!');
+           }
+    }
+}
+
+export function* theoDoiremoveUserProjectSaga() {
+    yield takeLatest(REMOVE_USER_PROJECT, removeUserProjectSaga);
 }
