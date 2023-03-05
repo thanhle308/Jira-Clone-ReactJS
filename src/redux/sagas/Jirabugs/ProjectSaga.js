@@ -65,13 +65,17 @@ function* updateProjectSaga(action) {
     try {
         //Sau khi lay du lieu thanh cong thi dispatch len reducer
         const { data, status } = yield call(() => jiraService.updateProject(action.projectUpdate))
+        console.log('stat', status);
         if (status === 200) {
             yield put({
                 type: GET_LIST_PROJECT_SAGA,
             })
-        }
+            notifiFunction('success', 'Edit project is successful !');
+        } 
+
     } catch (error) {
         console.log(error.response.data)
+        notifiFunction('error', 'Edit project is Fail !');
     }
     yield put({
         type: HIDE_LOADING
