@@ -11,6 +11,7 @@ import { drawerReducer } from "./reducers/DrawerJiraReducer";
 import { ProjectEditReducer } from "./reducers/ProjectEditReducer";
 import { TaskTypeReducer } from "./reducers/TaskTypeReducer";
 import { PriorityReducer } from "./reducers/PriorityReducer";
+import { StatusReducer } from "./reducers/StatusReducer";
 
 
 
@@ -25,6 +26,7 @@ const rootReducer = combineReducers({
     ProjectEditReducer,
     TaskTypeReducer,
     PriorityReducer,
+    StatusReducer,
 });
 
 export const store = createStore(rootReducer, applyMiddleware(thunk, middleWareSaga));

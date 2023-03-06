@@ -129,6 +129,7 @@ function* getProjectDetailSaga(action) {
     try {
         //Sau khi lay du lieu thanh cong thi dispatch len reducer
         const { data, status } = yield call(() => projectService.getProjectDetail(action.projectId))
+        console.log('detail',data);
         //lay du lieu thanh cong thi dua len redux
         yield put({
             type: 'PUT_PROJECT_DETAIL',

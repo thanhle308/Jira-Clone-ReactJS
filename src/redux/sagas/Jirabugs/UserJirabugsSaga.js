@@ -2,7 +2,7 @@ import axios from "axios";
 import { call, delay, fork, take, takeEvery, takeLatest, put } from 'redux-saga/effects';
 import { jiraService } from "../../../services/JiraService";
 import { ACCESS_TOKEN, USER_LOGIN } from "../../../util/setting";
-import { REMOVE_USER_PROJECT,USER_SIGNIN_API, USLOGIN, GET_USER_API, GET_USER_SEARCH, ADD_USER_PROJECT, GET_LIST_PROJECT_SAGA } from "../../types/Jirabugs/JirabugsType";
+import { REMOVE_USER_PROJECT,USER_SIGNIN_API, USLOGIN, GET_USER_API, GET_USER_SEARCH, ADD_USER_PROJECT, GET_LIST_PROJECT_SAGA, GET_USER_BY_PROJECT_SAGA, GET_USER_BY_PROJECT } from "../../types/Jirabugs/JirabugsType";
 import { DISPLAY_LOADING, HIDE_LOADING } from "../../types/LoadingType";
 import { history } from "../../../App";
 import { userService } from "../../../services/UserService";
@@ -42,8 +42,6 @@ function* signinSaga(action) {
         type: HIDE_LOADING
     })
 }
-
-
 export function* theoDoiSignin() {
     yield takeLatest(USER_SIGNIN_API, signinSaga);
 }
@@ -61,7 +59,6 @@ function* getUserSaga(action) {
         console.log(error.response.data)
     }
 }
-
 export function* theoDoigetUser() {
     yield takeLatest(GET_USER_API, getUserSaga);
 }
@@ -81,11 +78,11 @@ function* addUserProjectSaga(action) {
         console.log("hihi",error)
     }
 }
-
 export function* theoDoiaddUserProjectSaga() {
     yield takeLatest(ADD_USER_PROJECT, addUserProjectSaga);
 }
 // remove User
+
 function* removeUserProjectSaga(action) {
     //Gọi API
     try {
@@ -105,7 +102,35 @@ function* removeUserProjectSaga(action) {
            }
     }
 }
-
 export function* theoDoiremoveUserProjectSaga() {
     yield takeLatest(REMOVE_USER_PROJECT, removeUserProjectSaga);
+}
+// get User by project id 
+
+function* getUserByProjectIdSaga(action) {
+    const {idProject} = action;
+    //Gọi API
+    try {
+        const { data, status } = yield call(() => userService.getUserByProjectId(idProject));
+
+        if (status === 200){
+            yield put({
+                 type: GET_USER_BY_PROJECT,
+                 arrUser:data.content
+            })
+            
+         }
+
+    } catch (error) {
+        console.log(error)
+        if(error.response?.data.statusCode === 404){ 
+            yield put({
+                type: GET_USER_BY_PROJECT,
+                arrUser:[]
+           })
+        }
+    }
+}
+export function* theoDoigetUserByProjectIdSaga() {
+    yield takeLatest(GET_USER_BY_PROJECT_SAGA, getUserByProjectIdSaga);
 }

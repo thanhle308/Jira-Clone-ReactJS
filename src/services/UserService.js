@@ -11,5 +11,8 @@ export class UserService extends baseService {
     assignUserProject = (userProject) => {
         return this.post(`Project/assignUserProject`,userProject);
     }
+    getUserByProjectId = (idProject) => {
+        return this.get(`Users/getUserByProjectId?idProject=${idProject}`);
+    }
 }
 export const userService = new UserService();
